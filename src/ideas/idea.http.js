@@ -60,7 +60,6 @@ const register = async (req, res) => {
         const sanitizedFilename = originalFilename.replace(/\s+/g, '_'); // Reemplazar espacios por guiones bajos
 
         servObj.imagekey = `${req.protocol}://${config.host}/public/${Math.floor(Date.now() / 1000)}-${sanitizedFilename}`; // Agregar el nombre del archivo sin espacios
-        console.log("imagekey", servObj);
         const newIdea = await ideaController.createIdea(author, servObj);
 
         // Construir la URL completa para acceder a la imagen
