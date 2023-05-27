@@ -2,6 +2,7 @@ const ideaController = require('./idea.controller')
 const responses = require('../utils/handleResponses')
 const config = require('../../config').api
 
+
 const getAll = (req, res) => {
     ideaController.getAllIdea()
         .then(data => {
@@ -59,8 +60,11 @@ const register = async (req, res) => {
         const originalFilename = req.file.originalname;
         const sanitizedFilename = originalFilename.replace(/\s+/g, '_'); // Reemplazar espacios por guiones bajos
 
-        servObj.imagekey = `${req.protocol}://${config.host}/public/${Math.floor(Date.now() / 1000)}-${sanitizedFilename}`; // Agregar el nombre del archivo sin espacios
+        // servObj.imagekey = `${req.protocol}://${config.host}/public/${Math.floor(Date.now() / 1000)}-${sanitizedFilename}`; // Agregar el nombre del archivo sin espacios
+        const file = req.file
         const newIdea = await ideaController.createIdea(author, servObj);
+        const uploadedIdea = await ideaController.uploadImg(newIdea.id, file);
+        console.log(uploadedIdea);
 
         // Construir la URL completa para acceder a la imagen
         const imageUrl = servObj.imagekey;
@@ -89,6 +93,8 @@ const register = async (req, res) => {
         });
     }
 };
+
+
 
 
 
