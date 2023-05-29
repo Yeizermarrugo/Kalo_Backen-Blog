@@ -58,23 +58,17 @@ const register = async (req, res) => {
         const author = req.user.id;
         const servObj = req.body;
         const originalFilename = req.file.originalname;
-        const sanitizedFilename = originalFilename.replace(/\s+/g, '_'); // Reemplazar espacios por guiones bajos
-
-        // servObj.imagekey = `${req.protocol}://${config.host}/public/${Math.floor(Date.now() / 1000)}-${sanitizedFilename}`; // Agregar el nombre del archivo sin espacios
+        
         const file = req.file
+        console.log("URL",servObj.imagekey);
         const newIdea = await ideaController.createIdea(author, servObj);
         const uploadedIdea = await ideaController.uploadImg(newIdea.id, file);
         console.log(uploadedIdea);
 
-        // Construir la URL completa para acceder a la imagen
-        const imageUrl = servObj.imagekey;
-        console.log("imageUrl", imageUrl);
-
         responses.success({
             status: 201,
             data: {
-                ...newIdea.toJSON(),
-                imageUrl
+                ...newIdea.toJSON()
             },
             message: `Idea created successfully with id: ${newIdea.id}`,
             res
@@ -101,13 +95,14 @@ const register = async (req, res) => {
 const edit = (req, res) => {
     const id = req.params.id
     const data = req.body
+    const file = req.file
     if (!Object.keys(data).length) { // si no existen los key, entro al error
         return res.status(400).json({ message: 'Missing data' })
     } else if (
         !data.idea ||
         !data.description
-    ) {
-        return res.status(400).json({
+        ) {
+            return res.status(400).json({
             message: 'All fields must be completed', fields: {
                 idea: "String",
                 description: "String",
@@ -116,6 +111,7 @@ const edit = (req, res) => {
         })
     } else {
         const response = ideaController.editIdea(id, data)
+        const uploadedIdea =  ideaController.uploadImg(id, file);
         return res.status(200).json({
             message: 'Idea edited succesfully',
             idea: data
