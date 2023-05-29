@@ -11,7 +11,7 @@ router.get('/', idea.getAll)
 router.post('/', passportJwt, multerPublicationsPhotos.single('imagekey') ,idea.register)
 
 router.get('/:id', idea.getById)
-router.patch('/:id', passportJwt, idea.edit)
+router.patch('/:id', passportJwt,multerPublicationsPhotos.single('imagekey'), idea.edit)
 router.delete('/:id', passportJwt, idea.remove)
 
 router.post('/:ideaId/upvotes', passportJwt, idea.upvoteIdea)
